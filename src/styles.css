@@ -2761,3 +2761,144 @@ h2 {
 .lesson-content:focus {
   outline: none;
 }
+/* Official community branding, with a separate protocol credit. */
+.brand .brand-mark {
+  width: 37px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.brand .army-wordmark {
+  font-size: 21px;
+  letter-spacing: -0.7px;
+  font-weight: 700;
+}
+.protocol-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 21px;
+}
+.protocol-credit > span {
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  color: #aaa293;
+}
+.protocol-credit > img {
+  width: 101px;
+  height: 24px;
+  object-fit: contain;
+}
+.lesson-extra {
+  border: 1px solid #484237;
+  border-radius: 6px;
+  margin-top: 20px;
+  background: #201e19;
+}
+.lesson-extra summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 17px;
+  cursor: pointer;
+  list-style: none;
+  color: #dbc8a9;
+}
+.lesson-extra summary::-webkit-details-marker {
+  display: none;
+}
+.lesson-extra summary > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+}
+.lesson-extra summary > span:first-child::before {
+  content: "+";
+  color: #ff9a6e;
+  font-size: 18px;
+}
+.lesson-extra[open] summary > span:first-child::before {
+  content: "−";
+}
+.optional-label {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #a89d88;
+}
+.lesson-extra > div {
+  padding: 0 20px 20px;
+  display: grid;
+  gap: 20px;
+}
+.lesson-extra h4 {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #e4d5bb;
+}
+.lesson-extra p {
+  font-size: 13px;
+  line-height: 1.9;
+  color: #b4ad9e;
+  margin-top: 7px;
+}
+.footer-visual-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #d3b694;
+}
+@media (max-width: 850px) {
+  .main-nav {
+    gap: 17px;
+  }
+  .brand .army-wordmark {
+    font-size: 19px;
+  }
+  .brand .brand-mark {
+    width: 32px;
+  }
+}
+@media (max-width: 640px) {
+  .protocol-credit {
+    margin-top: 18px;
+  }
+  .protocol-credit > img {
+    width: 94px;
+  }
+  .hero-actions {
+    margin-top: 22px;
+  }
+  .brand .army-wordmark {
+    font-size: 21px;
+  }
+  .footer-visual-link {
+    order: 3;
+    width: 100%;
+  }
+  .optional-label {
+    font-size: 7px;
+  }
+  .lesson-extra summary {
+    padding: 14px;
+  }
+  .lesson-extra summary > span:first-child {
+    font-size: 11px;
+  }
+}
+.protocol-credit .protocol-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #e9e4da;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 17px;
+  letter-spacing: -0.5px;
+}
+.protocol-lockup img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}

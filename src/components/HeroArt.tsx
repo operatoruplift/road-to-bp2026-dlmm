@@ -1,17 +1,3 @@
-export function MeteorMark({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 40 40"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path d="M5 28 14 8l6 13 6-13 9 20H26l-6-9-6 9H5Z" fill="currentColor" />
-      <path d="M12 33h16" stroke="currentColor" strokeWidth="3.5" />
-    </svg>
-  );
-}
-
 export default function HeroArt() {
   const heights = [48, 73, 108, 141, 179, 141, 108, 73, 48];
   return (
@@ -71,11 +57,13 @@ export default function HeroArt() {
         />
         <path d="m504 172 6 9 4-10" stroke="#9e7259" fill="none" />
         <circle cx="450" cy="88" r="32" fill="#2b211c" stroke="#6e422e" />
-        <path
-          d="m430 97 13-25 7 15 7-15 13 25h-12l-8-12-8 12Z"
-          fill="#ff8355"
+        <image
+          href="/brand/lp-army-logo.svg"
+          x="429"
+          y="75"
+          width="42"
+          height="26"
         />
-        <path d="M440 103h20" stroke="#ff8355" strokeWidth="3" />
         <path
           d="M40 312 273 391 540 301"
           stroke="#584237"

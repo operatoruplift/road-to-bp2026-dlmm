@@ -52,6 +52,20 @@ The seven lessons are original beginner explanations. The airport booth analogy 
 
 Lesson IDs are `lp-basics`, `bins`, `ranges`, `fees`, `risks`, `entry-exit`, and `start-small`. Quiz answers use a zero-based `correct` index.
 
+`Lesson.extra?: LessonSection[]` contains optional deeper explanations. The ranges and risks lessons each have two extras. Keep these behind an optional disclosure so the seven-lesson beginner path remains short.
+
+## Advanced context corrections
+
+Rechecked on 16 October 2026 using the Solana MCP source catalogue, its Meteora documentation search, and the current Meteora pages. The corpus contains both older and current routes; current `core-products` pages take precedence over older `overview/products` pages.
+
+- Single-sided buying: in SOL/USDC, USDC below the current price can gradually buy SOL as trading reaches those bins. SOL above price can gradually sell for USDC. The same direction rule depends on which token is base and which is quote. [Strategies and use cases](https://docs.meteora.ag/core-products/dlmm/strategies-and-use-cases)
+- “Paid limit order” is only an analogy for a regular single-sided LP position. Its inventory can trade back on a reversal and it does not automatically close after a target is reached. Meteora now also has a distinct native Limit Order feature on eligible pools. Its order-account rules must not be confused with normal LP position rules. [Native DLMM limit orders](https://docs.meteora.ag/core-products/dlmm/limit-order), [DLMM swap mechanics](https://docs.meteora.ag/core-products/dlmm/what-is-dlmm)
+- The claim that every position is limited to 69 bins is outdated. Current dynamic position documentation states a 70-bin default layout that can grow to a supported maximum of 1,400 bins. The current rent guide still references an extension threshold of more than 69 bins. Avoid treating either default or rent threshold as the maximum capacity. [Dynamic positions](https://docs.meteora.ag/core-products/dlmm/dynamic-positions)
+- Bin step is measured in basis points. 10 means 0.1%; 100 means 1%. The overview documents support up to 400 basis points, or 4%, but pool creation options depend on the fee configuration. No numeric step is recommended for every pair. [DLMM formulas](https://docs.meteora.ag/core-products/dlmm/formulas), [DLMM overview](https://docs.meteora.ag/core-products/dlmm/what-is-dlmm), [Pool creation](https://docs.meteora.ag/user-guides/creating-a-liquidity-pool)
+- A fixed 0.057 SOL total opening cost is not supported by current documentation. The setup guide currently gives roughly 0.059 SOL for standard position rent, with possible extension rent, account creation, and transaction costs. The UI preview is the appropriate source for a particular position. Fixed amounts are deliberately omitted from the beginner lesson. [Getting started](https://docs.meteora.ag/user-guides/getting-started-with-meteora)
+- The $50 minus $120 example assumes $120 is the deposited tokens’ value decline, producing a $70 loss before costs. It must not label every token value drop as impermanent loss. A comparison with holding the original token amounts is a separate benchmark. [Understanding LP returns](https://developers.uniswap.org/docs/protocols/v2/concepts/understanding-returns)
+- Waiting preserves the position but does not earn swap fees while idle. Rebalancing changes the working range and can change exposure and costs. Withdrawing returns the current token mix. None promises recovery. [Dynamic Terminal](https://docs.meteora.ag/user-guides/how-to-use-dlmm/dynamic-terminal)
+
 ## User-supplied community references
 
 The supplied X posts returned 403 errors during research, so their contents were not treated as verified sources. The guide uses the user’s pasted context alongside the official documentation above.

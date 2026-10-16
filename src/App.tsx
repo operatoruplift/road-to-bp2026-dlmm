@@ -27,11 +27,12 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import HeroArt, { MeteorMark } from "./components/HeroArt";
+import HeroArt from "./components/HeroArt";
+import VisualGuide from "./components/VisualGuide";
 import Playground from "./components/Playground";
 import { lessons } from "./data/lessons";
 
-type Page = "learn" | "playground" | "glossary";
+type Page = "learn" | "playground" | "glossary" | "graphics";
 const storageKey = "dlmm-road-progress-v1";
 const icons: LucideIcon[] = [
   Store,
@@ -150,7 +151,7 @@ function readProgress(): string[] {
 function currentRoute() {
   const hash = window.location.hash.slice(1);
   return {
-    page: (hash === "playground" || hash === "glossary"
+    page: (hash === "playground" || hash === "glossary" || hash === "graphics"
       ? hash
       : "learn") as Page,
     lesson: hash.startsWith("lesson/") ? hash.slice(7) : "",
@@ -183,14 +184,13 @@ function App() {
       if (next.lesson) {
         const index = lessons.findIndex((l) => l.id === next.lesson);
         if (index >= 0) setActiveLesson(index);
-        setTimeout(
-          () =>
-            lessonRef.current?.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            }),
-          60,
-        );
+        setTimeout(() => {
+          lessonRef.current?.focus({ preventScroll: true });
+          lessonRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 60);
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -270,9 +270,15 @@ function App() {
       </a>
       <header className="site-header">
         <div className="header-inner">
-          <a href="#learn" className="brand" aria-label="Meteora learning home">
-            <MeteorMark />
-            <span>meteora</span>
+          <a href="#learn" className="brand" aria-label="LP Army learning home">
+            <img
+              className="brand-mark"
+              src="/brand/lp-army-logo.svg"
+              alt=""
+              width="40"
+              height="25"
+            />
+            <span className="army-wordmark">LP ARMY</span>
             <span className="brand-divider" />
             <span className="learn-label">LEARN</span>
           </a>
@@ -302,6 +308,13 @@ function App() {
               aria-current={route.page === "glossary" ? "page" : undefined}
             >
               Glossary
+            </a>
+            <a
+              href="#graphics"
+              className={route.page === "graphics" ? "active" : ""}
+              aria-current={route.page === "graphics" ? "page" : undefined}
+            >
+              Visual guide
             </a>
           </nav>
           <a
@@ -343,14 +356,31 @@ function App() {
                   <span>One bin at a time.</span>
                 </h1>
                 <p className="hero-description">
-                  You know how to swap tokens.
+                  A new way to understand crypto.
                   <br />
-                  Now learn how the other side works.
+                  One small idea at a time.
                 </p>
                 <p className="hero-detail">
                   A simple, hands-on guide to Meteora DLMM. From your very first
                   liquidity pool to bins, fees, and knowing when to walk away.
                 </p>
+                <a
+                  className="protocol-credit"
+                  href="https://www.meteora.ag/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>EXPLORING DLMM ON</span>
+                  <span className="protocol-lockup">
+                    <img
+                      src="/brand/meteora-mark.svg"
+                      alt=""
+                      width="24"
+                      height="24"
+                    />
+                    Meteora
+                  </span>
+                </a>
                 <div className="hero-actions">
                   <button
                     className="button button-primary"
@@ -534,6 +564,24 @@ function App() {
                       <p>{lesson.takeaway}</p>
                     </div>
                   </div>
+                  {lesson.extra?.length ? (
+                    <details className="lesson-extra">
+                      <summary>
+                        <span>
+                          <Sparkles size={15} /> Go one step deeper
+                        </span>
+                        <span className="optional-label">OPTIONAL</span>
+                      </summary>
+                      <div>
+                        {lesson.extra.map((item) => (
+                          <section key={item.title}>
+                            <h4>{item.title}</h4>
+                            <p>{item.body}</p>
+                          </section>
+                        ))}
+                      </div>
+                    </details>
+                  ) : null}
                   <section className="quiz" aria-labelledby="quiz-heading">
                     <div className="eyebrow">
                       <Sparkles size={13} /> A QUICK LIGHTBULB CHECK
@@ -690,6 +738,7 @@ function App() {
             </section>
           </>
         )}
+        {route.page === "graphics" && <VisualGuide />}
         {route.page === "playground" && (
           <div className="container playground-wrapper">
             <Playground />
@@ -786,11 +835,19 @@ function App() {
       <footer className="site-footer container">
         <div className="footer-top">
           <a href="#learn" className="brand">
-            <MeteorMark />
-            <span>meteora</span>
+            <img
+              className="brand-mark"
+              src="/brand/lp-army-logo.svg"
+              alt=""
+              width="40"
+              height="25"
+            />
+            <span className="army-wordmark">LP ARMY</span>
             <span className="learn-label">LEARN</span>
           </a>
-          <span>Made for the curious. Built for the journey.</span>
+          <a className="footer-visual-link" href="#graphics">
+            Seven visual cheat sheets <ArrowUpRight size={14} />
+          </a>
           <a href="https://www.meteora.ag/" target="_blank" rel="noreferrer">
             Explore Meteora
             <ArrowUpRight size={14} />
@@ -798,8 +855,8 @@ function App() {
         </div>
         <div className="footer-bottom">
           <p>
-            An independent community learning guide, inspired by Meteora and the
-            LP Army. Not an official Meteora product. Educational examples, not
+            An independent community learning guide for Meteora DLMM. Not an
+            official Meteora or LP Army product. Educational examples, not
             financial advice. Providing liquidity can lose money.
           </p>
           <span>

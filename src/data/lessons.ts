@@ -24,6 +24,7 @@ export interface Lesson {
   duration: string;
   intro: string;
   sections: LessonSection[];
+  extra?: LessonSection[];
   takeaway: string;
   quiz: LessonQuiz;
   sources: LessonSource[];
@@ -159,6 +160,16 @@ export const lessons: Lesson[] = [
         body: "Bid-Ask puts more liquidity near the outer bins. Think of a valley between two hills. It can help spread buying or selling across a price move. Much of the deposit may wait away from the active price. It does not make a falling token safe.",
       },
     ],
+    extra: [
+      {
+        title: "One token can wait for your price",
+        body: "To buy SOL lower, place USDC in bins below the current price. To sell SOL higher, place SOL above it. Fees arrive only when swaps use those bins. People call this a “paid limit order,” but regular LP liquidity can trade back if price reverses. It does not close itself at your target. Meteora also has a separate native Limit Order feature.",
+      },
+      {
+        title: "Bin step is the gap between price tags",
+        body: "10 basis points means 0.1%. 100 means 1%, so a $100 bin is followed by $101. A bigger step covers more price movement with the same number of bins. Check the pool’s available settings; there is no universal best step. Current dynamic positions support up to 1,400 bins, with extra rent for added account space.",
+      },
+    ],
     takeaway:
       "Range is where your money waits. Shape is how you divide it. Neither guarantees fees.",
     quiz: {
@@ -177,6 +188,14 @@ export const lessons: Lesson[] = [
       {
         label: "Meteora: Position ranges",
         url: "https://docs.meteora.ag/core-products/dlmm/dynamic-positions",
+      },
+      {
+        label: "Meteora: Bin-step math",
+        url: "https://docs.meteora.ag/core-products/dlmm/formulas",
+      },
+      {
+        label: "Meteora: Native limit orders",
+        url: "https://docs.meteora.ag/core-products/dlmm/limit-order",
       },
     ],
   },
@@ -261,6 +280,16 @@ export const lessons: Lesson[] = [
       {
         title: "The pool cannot fix a bad token",
         body: "Tokens can crash, lose their peg, or become hard to sell. Bugs in the software can also put funds at risk. An audited protocol does not make every token safe. Fees can be too small to cover losses, even when the displayed rate looks exciting.",
+      },
+    ],
+    extra: [
+      {
+        title: "Wait, rebalance, or withdraw?",
+        body: "Wait: keep the position open and accept no swap fees while out of range. Rebalance: move liquidity to a new range, changing exposure and possibly adding costs. Withdraw: take back the tokens you now own. Use your original risk plan to decide. None of these choices automatically repairs a loss.",
+      },
+      {
+        title: "$50 in fees can still mean a $70 loss",
+        body: "If your deposited tokens lose $120 in value and you earn $50 in fees, your result is -$70 before costs. That $120 is a value drop, not automatically impermanent loss. IL asks a separate question: how does the LP value before fees compare with simply holding the original token amounts?",
       },
     ],
     takeaway:
