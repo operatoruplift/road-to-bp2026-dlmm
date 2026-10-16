@@ -2757,3 +2757,7 @@ h2 {
     font-size: 10px;
   }
 }
+
+.lesson-content:focus {
+  outline: none;
+}

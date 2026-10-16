@@ -169,8 +169,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState<number | null>(null);
   const [speaking, setSpeaking] = useState(false);
-  const courseRef = useRef<HTMLElement>(null);
-  const lessonRef = useRef<HTMLHeadingElement>(null);
+  const lessonRef = useRef<HTMLElement>(null);
   const lesson = lessons[activeLesson];
   const totalMinutes = lessons.reduce(
     (sum, item) => sum + (Number.parseInt(String(item.duration), 10) || 3),
@@ -186,7 +185,7 @@ function App() {
         if (index >= 0) setActiveLesson(index);
         setTimeout(
           () =>
-            courseRef.current?.scrollIntoView({
+            lessonRef.current?.scrollIntoView({
               behavior: "smooth",
               block: "start",
             }),
@@ -199,7 +198,7 @@ function App() {
     window.addEventListener("hashchange", onHash);
     if (currentRoute().lesson)
       setTimeout(
-        () => courseRef.current?.scrollIntoView({ block: "start" }),
+        () => lessonRef.current?.scrollIntoView({ block: "start" }),
         80,
       );
     return () => window.removeEventListener("hashchange", onHash);
@@ -222,7 +221,7 @@ function App() {
     window.location.hash = `lesson/${lessons[index].id}`;
     setTimeout(() => {
       lessonRef.current?.focus({ preventScroll: true });
-      courseRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      lessonRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
   }
   function chooseAnswer(index: number) {
@@ -405,7 +404,6 @@ function App() {
             </div>
             <section
               className="course container"
-              ref={courseRef}
               aria-labelledby="course-title"
             >
               <div className="section-heading">
@@ -488,7 +486,12 @@ function App() {
                     <ArrowUpRight size={16} />
                   </a>
                 </aside>
-                <article className="lesson-content" key={lesson.id}>
+                <article
+                  className="lesson-content"
+                  key={lesson.id}
+                  ref={lessonRef}
+                  tabIndex={-1}
+                >
                   <div className="lesson-kicker">
                     <span>
                       LESSON {String(activeLesson + 1).padStart(2, "0")}{" "}
@@ -508,9 +511,7 @@ function App() {
                       </button>
                     )}
                   </div>
-                  <h3 ref={lessonRef} tabIndex={-1}>
-                    {lesson.title}
-                  </h3>
+                  <h3>{lesson.title}</h3>
                   <p className="lesson-intro">{lesson.intro}</p>
                   <LessonVisual index={activeLesson} />
                   <div className="lesson-sections">
