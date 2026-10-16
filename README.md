@@ -9,6 +9,8 @@ An independent, beginner-friendly learning website about liquidity providing on 
 - Optional browser read-aloud
 - Interactive Spot, Curve, and Bid-Ask playground with tight/wide ranges
 - Price slider, token composition, out-of-range behavior, and a hypothetical fee demo
+- Single-sided buying and selling modes, plus an illustrative volatility fee slider
+- Interactive bin-step explainer, net-PnL example, and entry-planning checklist
 - Searchable plain-English glossary
 - Responsive design, keyboard controls, reduced-motion support, and self-hosted fonts
 - Official sources linked from each lesson
@@ -34,7 +36,7 @@ npm run build
 npm run preview
 ```
 
-Built with React, TypeScript, Vite, and Lucide. Lesson content lives in `src/data/lessons.ts`. Simulator logic and tests live in `src/lib/`. Source verification and model limitations are recorded in `CONTENT_NOTES.md`.
+Built with React, TypeScript, Vite, and Lucide. Lesson content lives in `src/data/lessons.ts`. Simulator logic and tests live in `src/lib/`. Source verification and model limitations are recorded in `CONTENT_NOTES.md`. The eight-point feature audit and corrections are in `AUDIT.md`.
 
 ## Deploy
 

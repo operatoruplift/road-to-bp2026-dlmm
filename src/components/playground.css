@@ -482,13 +482,15 @@
   line-height: 1;
 }
 .pg-shape-options button.selected,
-.pg-range-options button.selected {
+.pg-range-options button.selected,
+.pg-deposit-options button.selected {
   border-color: var(--pg-orange);
   color: #ff956e;
   background: #33271f;
 }
 .pg-shape-options button:hover,
-.pg-range-options button:hover {
+.pg-range-options button:hover,
+.pg-deposit-options button:hover {
   border-color: #b87454;
 }
 .pg-setting-description {
@@ -502,6 +504,73 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+.pg-deposit-options {
+  display: grid;
+  gap: 6px;
+}
+.pg-deposit-options button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid #393932;
+  border-radius: 5px;
+  background: #21211e;
+  color: #bcbcb1;
+  font-size: 11px;
+  padding: 10px 12px;
+  text-align: left;
+}
+.pg-setup-note {
+  margin: 12px 0 0;
+  color: #a5a49e;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.pg-mix-panel > .pg-reversal-note {
+  border-top: 1px solid var(--pg-border);
+  padding-top: 12px;
+}
+.pg-reversal-note strong {
+  color: #e4e2d6;
+  font-weight: 500;
+}
+.pg-volatility-control {
+  border-bottom: 1px solid var(--pg-border);
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+}
+.pg-fee-equation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 13px 10px;
+  margin-top: 15px;
+  background: #141413;
+  border: 1px solid #2d2d28;
+  border-radius: 5px;
+}
+.pg-fee-equation > div > span {
+  display: block;
+  color: #a5a49e;
+  font-size: 8px;
+  letter-spacing: 0.6px;
+}
+.pg-fee-equation strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Space Grotesk", sans-serif;
+}
+.pg-fee-equation > div:last-child strong {
+  color: #ff956e;
+}
+.pg-fee-equation > span {
+  color: #797a71;
+  font-size: 13px;
 }
 .pg-range-options button {
   display: flex;
@@ -736,6 +805,10 @@
   .pg-shape-options button {
     padding: 16px 4px;
     font-size: 11px;
+  }
+  .pg-shape-options button > span {
+    font-size: 14px;
+    letter-spacing: 0.5px;
   }
   .pg-range-options button {
     font-size: 11px;

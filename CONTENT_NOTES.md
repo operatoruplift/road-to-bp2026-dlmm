@@ -66,6 +66,14 @@ Rechecked on 16 October 2026 using the Solana MCP source catalogue, its Meteora 
 - The $50 minus $120 example assumes $120 is the deposited tokens’ value decline, producing a $70 loss before costs. It must not label every token value drop as impermanent loss. A comparison with holding the original token amounts is a separate benchmark. [Understanding LP returns](https://developers.uniswap.org/docs/protocols/v2/concepts/understanding-returns)
 - Waiting preserves the position but does not earn swap fees while idle. Rebalancing changes the working range and can change exposure and costs. Withdrawing returns the current token mix. None promises recovery. [Dynamic Terminal](https://docs.meteora.ag/user-guides/how-to-use-dlmm/dynamic-terminal)
 
+## Interactive audit additions
+
+The eight-point feature audit is documented in `AUDIT.md`. The playground now supports single-sided deposits, with ranges fixed around a $150 setup price; it can illustrate conversion in either direction and does not model self-closing native limit orders. Price, range, shape, or deposit mode do not change the pretend starting notional. Setup changes start a fresh example.
+
+The fee illustration maps a 0–100 volatility control linearly to a variable rate from 0% to 9.7%, added to a 0.3% base. This is deliberately not the real volatility formula. The maximum total is 10%. The demo uses 90% LP allocation after a 10% protocol share, consistent with the documented standard pool split, then a hypothetical 10% share of the active bin. A $1,000 calm swap therefore yields $0.27 in example LP fees. Rates and ownership vary in real pools. Volatility changes affect subsequent demo swaps, leaving accrued fees unchanged.
+
+The separate PnL exercise subtracts costs and the original deposit from current token value plus fees. Its optional holding comparison uses the same original token quantities. The entry checklist signals that four planning statements are acknowledged, not an investment recommendation. No precise APR, forecast, or safe-pool score is produced.
+
 ## User-supplied community references
 
 The supplied X posts returned 403 errors during research, so their contents were not treated as verified sources. The guide uses the user’s pasted context alongside the official documentation above.

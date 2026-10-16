@@ -13,14 +13,16 @@ import {
 } from "lucide-react";
 import {
   BIN_STEP,
+  getFeeRates,
   getPosition,
   getRange,
   makeBins,
   PRICE_MAX,
   PRICE_MIN,
   simulateFee,
+  START_PRICE,
 } from "../lib/simulator";
-import type { RangeSize, Shape } from "../lib/simulator";
+import type { DepositMode, RangeSize, Shape } from "../lib/simulator";
 import "./playground.css";
 
 const shapes: { id: Shape; name: string; icon: string; description: string }[] =
@@ -35,17 +37,35 @@ const shapes: { id: Shape; name: string; icon: string; description: string }[] =
       id: "curve",
       name: "Curve",
       icon: "▂▅█▅▂",
-      description:
-        "More in the middle. Most of your liquidity sits near the starting price.",
+      description: "More in the middle of your chosen range.",
     },
     {
       id: "bid-ask",
       name: "Bid-Ask",
       icon: "█▅▂▅█",
-      description:
-        "More at the edges. More liquidity waits farther from the starting price.",
+      description: "More at the two edges of your chosen range.",
     },
   ];
+const depositModes: { id: DepositMode; name: string; description: string }[] = [
+  {
+    id: "two-sided",
+    name: "Both tokens",
+    description: "Start with SOL and USDC around the $150 starting price.",
+  },
+  {
+    id: "buy-lower",
+    name: "Buy SOL lower",
+    description:
+      "Start with only USDC below $150. It buys SOL as price falls through your bins.",
+  },
+  {
+    id: "sell-higher",
+    name: "Sell SOL higher",
+    description:
+      "Start with only SOL above $150. It sells for USDC as price rises through your bins.",
+  },
+];
+const feePercent = (rate: number) => `${(rate * 100).toFixed(2)}%`;
 const money = (amount: number, digits = 0) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -57,24 +77,41 @@ const money = (amount: number, digits = 0) =>
 export default function Playground() {
   const [shape, setShape] = useState<Shape>("spot");
   const [rangeSize, setRangeSize] = useState<RangeSize>("wide");
-  const [price, setPrice] = useState(150);
+  const [depositMode, setDepositMode] = useState<DepositMode>("two-sided");
+  const [price, setPrice] = useState(START_PRICE);
+  const [volatility, setVolatility] = useState(0);
   const [swapAmount, setSwapAmount] = useState(1_000);
   const [fees, setFees] = useState(0);
   const [swaps, setSwaps] = useState(0);
-  const bins = useMemo(() => makeBins(shape, rangeSize), [shape, rangeSize]);
+  const bins = useMemo(
+    () => makeBins(shape, rangeSize, depositMode),
+    [shape, rangeSize, depositMode],
+  );
   const position = getPosition(price, bins);
-  const range = getRange(rangeSize);
+  const range = getRange(rangeSize, depositMode);
   const selectedShape = shapes.find((item) => item.id === shape)!;
+  const selectedMode = depositModes.find((item) => item.id === depositMode)!;
   const below = price < range.lower;
+  const waiting =
+    (depositMode === "buy-lower" && price >= range.upper) ||
+    (depositMode === "sell-higher" && price < range.lower);
+  const status = position.inRange
+    ? "In your range"
+    : waiting
+      ? "Waiting for price"
+      : "Out of your range";
   const percent = ((price - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
   const maxWeight = Math.max(...bins.map((bin) => bin.weight));
-  const nextFee = simulateFee(swapAmount, position.inRange);
+  const feeRates = getFeeRates(volatility);
+  const nextFee = simulateFee(swapAmount, position.inRange, volatility);
   const solPercent = Math.round(position.solShare * 100);
   const message = position.inRange
     ? "Your booth is open. Swaps in bins where you have liquidity can earn you fees."
-    : below
-      ? "Price fell below your range. Your position is now all SOL, and new fees stop."
-      : "Price rose above your range. Your position is now all USDC, and new fees stop.";
+    : waiting
+      ? `Your ${depositMode === "buy-lower" ? "USDC waits for a lower" : "SOL waits for a higher"} price. No new fees until trades reach your bins.`
+      : below
+        ? "Price fell below your range. Your position is now all SOL, and new fees stop."
+        : "Price rose above your range. Your position is now all USDC, and new fees stop.";
 
   function clearFees() {
     setFees(0);
@@ -83,19 +120,30 @@ export default function Playground() {
   function changeShape(next: Shape) {
     if (next !== shape) {
       setShape(next);
+      setPrice(START_PRICE);
       clearFees();
     }
   }
   function changeRange(next: RangeSize) {
     if (next !== rangeSize) {
       setRangeSize(next);
+      setPrice(START_PRICE);
+      clearFees();
+    }
+  }
+  function changeDepositMode(next: DepositMode) {
+    if (next !== depositMode) {
+      setDepositMode(next);
+      setPrice(START_PRICE);
       clearFees();
     }
   }
   function reset() {
     setShape("spot");
     setRangeSize("wide");
-    setPrice(150);
+    setDepositMode("two-sided");
+    setPrice(START_PRICE);
+    setVolatility(0);
     setSwapAmount(1_000);
     clearFees();
   }
@@ -152,14 +200,14 @@ export default function Playground() {
                 className={`pg-status ${position.inRange ? "is-open" : "is-closed"}`}
               >
                 <span />
-                {position.inRange ? "In your range" : "Out of your range"}
+                {status}
               </span>
             </div>
 
             <div
               className="pg-chart"
               role="img"
-              aria-label={`Illustrative ${selectedShape.name} liquidity distribution. Price ${money(price)}. Range ${money(range.lower)} to ${money(range.upper)}. ${position.inRange ? "In range." : "Out of range."}`}
+              aria-label={`Illustrative ${selectedShape.name} liquidity distribution. ${selectedMode.name}. Price ${money(price)}. Range ${money(range.lower)} to ${money(range.upper)}. ${status}.`}
             >
               <div className="pg-chart-grid">
                 <i />
@@ -232,7 +280,7 @@ export default function Playground() {
                 step={1}
                 value={price}
                 onChange={(event) => setPrice(Number(event.target.value))}
-                aria-valuetext={`${price} USDC per SOL, ${position.inRange ? "in range" : "out of range"}`}
+                aria-valuetext={`${price} USDC per SOL, ${status.toLowerCase()}`}
               />
               <div className="pg-slider-labels">
                 <span>
@@ -280,6 +328,13 @@ export default function Playground() {
               Price goes up: you sell SOL bit by bit. Price goes down: you buy
               SOL bit by bit.
             </p>
+            {depositMode !== "two-sided" && (
+              <p className="pg-reversal-note">
+                <strong>Try moving the price back.</strong> Your tokens trade
+                back too. Regular single-sided LP does not close itself when
+                filled, so a “paid limit order” is only an analogy.
+              </p>
+            )}
           </div>
         </section>
 
@@ -290,6 +345,24 @@ export default function Playground() {
             </h2>
             <div className="pg-setting-label">
               <span>01</span>
+              <h3>What do you deposit?</h3>
+            </div>
+            <div className="pg-deposit-options" aria-label="Deposit mode">
+              {depositModes.map((item) => (
+                <button
+                  key={item.id}
+                  aria-pressed={depositMode === item.id}
+                  onClick={() => changeDepositMode(item.id)}
+                  className={depositMode === item.id ? "selected" : ""}
+                >
+                  {item.name}
+                  {depositMode === item.id && <Check size={13} />}
+                </button>
+              ))}
+            </div>
+            <p className="pg-setting-description">{selectedMode.description}</p>
+            <div className="pg-setting-label">
+              <span>02</span>
               <h3>Choose your shape</h3>
             </div>
             <div className="pg-shape-options" aria-label="Liquidity shape">
@@ -309,7 +382,7 @@ export default function Playground() {
               {selectedShape.description}
             </p>
             <div className="pg-setting-label">
-              <span>02</span>
+              <span>03</span>
               <h3>Choose your range</h3>
             </div>
             <div className="pg-range-options" aria-label="Price range">
@@ -341,6 +414,10 @@ export default function Playground() {
                 ? "More money in fewer bins. Price can leave your range sooner."
                 : "The same money across more bins. More room for price to move."}
             </p>
+            <p className="pg-setup-note">
+              Changing your setup starts again at $150 and clears demo fees.
+              Bins stay fixed while you move the price.
+            </p>
           </section>
 
           <section className="pg-panel pg-fee-panel">
@@ -354,6 +431,52 @@ export default function Playground() {
               A trader visits your booth. You get a small slice of their swap
               fee.
             </p>
+            <div className="pg-volatility-control">
+              <div className="pg-swap-label">
+                <label htmlFor="pg-volatility">Market volatility</label>
+                <strong>
+                  {volatility === 0
+                    ? "Calm"
+                    : volatility < 60
+                      ? "Moving"
+                      : "Surging"}
+                </strong>
+              </div>
+              <input
+                id="pg-volatility"
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={volatility}
+                onChange={(event) => setVolatility(Number(event.target.value))}
+                aria-valuetext={`${volatility} out of 100, ${feePercent(feeRates.total)} illustrative total swap fee`}
+              />
+              <div className="pg-slider-labels">
+                <span>Calm chop</span>
+                <span>High volatility</span>
+              </div>
+              <div className="pg-fee-equation" aria-live="polite">
+                <div>
+                  <span>BASE</span>
+                  <strong>{feePercent(feeRates.base)}</strong>
+                </div>
+                <span>+</span>
+                <div>
+                  <span>VARIABLE</span>
+                  <strong>{feePercent(feeRates.variable)}</strong>
+                </div>
+                <span>=</span>
+                <div>
+                  <span>SWAP FEE</span>
+                  <strong>{feePercent(feeRates.total)}</strong>
+                </div>
+              </div>
+              <p className="pg-setup-note">
+                A made-up fee curve with a 10% total fee cap. This is a trader’s
+                swap fee, not your return. Higher fees do not remove price risk.
+              </p>
+            </div>
             <div className="pg-swap-label">
               <label htmlFor="pg-swap">Pretend swap amount</label>
               <strong>{money(swapAmount)}</strong>
@@ -395,14 +518,31 @@ export default function Playground() {
                 How this example works <Info size={12} />
               </summary>
               <p>
-                Swap × 0.3% fee × 95% left after a hypothetical 5% protocol cut
-                × your 10% share of the active bin. A $1,000 swap gives you
-                $0.285 before rounding.
+                Swap × {feePercent(feeRates.total)} fee × 90% example LP share
+                after the protocol cut × your 10% share of the active bin. Your
+                next {money(swapAmount)} swap earns {money(nextFee, 2)}
+                {position.inRange
+                  ? " in this example."
+                  : " because your liquidity is idle."}
               </p>
               <p>
                 These are made-up settings, not a live pool. The whole swap
                 stays in one bin. Real fees and your share vary. Fees stay
-                separate. Changing shape or range starts a fresh fee example.
+                separate. Moving the volatility slider changes future swaps
+                only. Real variable fees use a volatility accumulator, bin step
+                and pool settings, not this simple slider formula.
+              </p>
+              <p>
+                <a
+                  href="https://docs.meteora.ag/core-products/dlmm/collect-fee-mode"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Quote-only fees
+                </a>{" "}
+                are a pool setting. When enabled, fees arrive in the pool’s
+                quote token, such as USDC or SOL. You cannot switch this when
+                claiming. Actual fee splits also vary by pool.
               </p>
             </details>
           </section>

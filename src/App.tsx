@@ -30,6 +30,10 @@ import type { LucideIcon } from "lucide-react";
 import HeroArt from "./components/HeroArt";
 import VisualGuide from "./components/VisualGuide";
 import Playground from "./components/Playground";
+import RoleHook from "./components/RoleHook";
+import BinStepLab from "./components/BinStepLab";
+import EcosystemLinks from "./components/EcosystemLinks";
+import LessonTools from "./components/LessonTools";
 import { lessons } from "./data/lessons";
 
 type Page = "learn" | "playground" | "glossary" | "graphics";
@@ -356,14 +360,9 @@ function App() {
                   <span>One bin at a time.</span>
                 </h1>
                 <p className="hero-description">
-                  A new way to understand crypto.
-                  <br />
-                  One small idea at a time.
+                  You know how to swap. Now meet the other side.
                 </p>
-                <p className="hero-detail">
-                  A simple, hands-on guide to Meteora DLMM. From your very first
-                  liquidity pool to bins, fees, and knowing when to walk away.
-                </p>
+                <RoleHook />
                 <a
                   className="protocol-credit"
                   href="https://www.meteora.ag/"
@@ -564,6 +563,9 @@ function App() {
                       <p>{lesson.takeaway}</p>
                     </div>
                   </div>
+                  {lesson.id === "bins" && <BinStepLab />}
+                  <LessonTools lessonId={lesson.id} />
+                  {lesson.id === "start-small" && <EcosystemLinks />}
                   {lesson.extra?.length ? (
                     <details className="lesson-extra">
                       <summary>
@@ -708,7 +710,7 @@ function App() {
                 <h2>Good company for the road.</h2>
               </div>
               <a
-                href="https://www.lparmy.com/"
+                href="https://www.lparmy.com/academy"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -716,8 +718,8 @@ function App() {
                   <GraduationCap />
                 </span>
                 <div>
-                  <strong>Learn with the LP Army</strong>
-                  <p>Community, coaching, and more practice.</p>
+                  <strong>LP Army Academy</strong>
+                  <p>LP 101 and Zero to Hero for newcomers.</p>
                 </div>
                 <ArrowUpRight size={20} />
               </a>

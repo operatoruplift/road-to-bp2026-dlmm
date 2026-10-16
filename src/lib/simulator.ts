@@ -1,13 +1,16 @@
 export type Shape = "spot" | "curve" | "bid-ask";
 export type RangeSize = "tight" | "wide";
+export type DepositMode = "two-sided" | "buy-lower" | "sell-higher";
 
 export const DEMO_NOTIONAL = 1_000;
 export const BIN_STEP = 2;
 export const PRICE_MIN = 120;
 export const PRICE_MAX = 180;
+export const START_PRICE = 150;
 export const FEE_ASSUMPTIONS = {
   swapRate: 0.003,
-  protocolShare: 0.05,
+  maximumSwapRate: 0.1,
+  protocolShare: 0.1,
   activeBinShare: 0.1,
 };
 
@@ -18,14 +21,24 @@ export interface DemoBin {
   allocation: number;
 }
 
-export function getRange(size: RangeSize) {
+export function getRange(size: RangeSize, mode: DepositMode = "two-sided") {
+  if (mode === "buy-lower") {
+    return { lower: size === "tight" ? 140 : 122, upper: 148 };
+  }
+  if (mode === "sell-higher") {
+    return { lower: 152, upper: size === "tight" ? 160 : 178 };
+  }
   return size === "tight"
     ? { lower: 142, upper: 158 }
     : { lower: 130, upper: 170 };
 }
 
-export function makeBins(shape: Shape, size: RangeSize): DemoBin[] {
-  const range = getRange(size);
+export function makeBins(
+  shape: Shape,
+  size: RangeSize,
+  mode: DepositMode = "two-sided",
+): DemoBin[] {
+  const range = getRange(size, mode);
   const count = (range.upper - range.lower) / BIN_STEP;
   const raw = Array.from({ length: count }, (_, i) => {
     const distance = Math.abs((2 * i) / (count - 1) - 1);
@@ -60,8 +73,31 @@ export function getPosition(price: number, bins: DemoBin[]) {
   };
 }
 
-export function simulateFee(swapAmount: number, inRange: boolean) {
+// A deliberately simple teaching curve, not Meteora's volatility accumulator.
+export function getFeeRates(volatility: number) {
+  const level = Number.isFinite(volatility)
+    ? Math.max(0, Math.min(100, volatility))
+    : 0;
+  const base = FEE_ASSUMPTIONS.swapRate;
+  const variable = (FEE_ASSUMPTIONS.maximumSwapRate - base) * (level / 100);
+  return {
+    base,
+    variable,
+    total: Math.min(FEE_ASSUMPTIONS.maximumSwapRate, base + variable),
+  };
+}
+
+export function simulateFee(
+  swapAmount: number,
+  inRange: boolean,
+  volatility = 0,
+) {
   if (!inRange || !Number.isFinite(swapAmount) || swapAmount <= 0) return 0;
-  const { swapRate, protocolShare, activeBinShare } = FEE_ASSUMPTIONS;
-  return swapAmount * swapRate * (1 - protocolShare) * activeBinShare;
+  const { protocolShare, activeBinShare } = FEE_ASSUMPTIONS;
+  return (
+    swapAmount *
+    getFeeRates(volatility).total *
+    (1 - protocolShare) *
+    activeBinShare
+  );
 }
