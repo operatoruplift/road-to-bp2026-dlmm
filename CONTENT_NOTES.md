@@ -74,6 +74,12 @@ The fee illustration maps a 0–100 volatility control linearly to a variable ra
 
 The separate PnL exercise subtracts costs and the original deposit from current token value plus fees. Its optional holding comparison uses the same original token quantities. The entry checklist signals that four planning statements are acknowledged, not an investment recommendation. No precise APR, forecast, or safe-pool score is produced.
 
+## Single-sided shape correction
+
+On 18 October 2026, community screenshot feedback identified that the playground incorrectly centered a full Curve or Bid-Ask distribution inside a single-sided range. The corrected illustration uses one linear leg: Curve increases toward the $150 setup price, and Bid-Ask increases toward the far edge. The sell side mirrors the buy side. Spot remains even. Shape button icons and explanations now follow the selected deposit mode, and the distribution stays fixed as the pretend market price moves.
+
+The direction follows Meteora's [official strategy helper](https://github.com/MeteoraAg/dlmm-sdk/blob/main/ts-client/src/dlmm/helpers/strategy.ts). The simulator still illustrates normalized allocation weights with $2 bins. It does not reproduce SDK token amounts, price conversion or rounding. Regression checks cover both range sizes, every shape, mirrored buy/sell weights, and the different token mix halfway through an uneven distribution.
+
 ## User-supplied community references
 
 The supplied X posts returned 403 errors during research, so their contents were not treated as verified sources. The guide uses the user’s pasted context alongside the official documentation above.

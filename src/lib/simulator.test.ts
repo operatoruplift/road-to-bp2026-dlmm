@@ -81,7 +81,17 @@ test("one-sided deposits wait in their initial asset, enter, and fully convert",
         );
         const halfway = getPosition((range.lower + range.upper) / 2, bins);
         assert.equal(halfway.inRange, true);
-        assert.ok(Math.abs(halfway.solShare - 0.5) < 1e-12);
+        assert.ok(halfway.solShare > 0 && halfway.solShare < 1);
+        if (shape === "spot") {
+          assert.ok(Math.abs(halfway.solShare - 0.5) < 1e-12);
+        } else {
+          const heavierSolHalf =
+            (shape === "curve" && mode === "buy-lower") ||
+            (shape === "bid-ask" && mode === "sell-higher");
+          assert.ok(
+            heavierSolHalf ? halfway.solShare > 0.5 : halfway.solShare < 0.5,
+          );
+        }
         assert.ok(simulateFee(1_000, halfway.inRange) > 0);
         const endPrice =
           mode === "buy-lower" ? range.lower - 1 : range.upper + 1;
@@ -90,6 +100,43 @@ test("one-sided deposits wait in their initial asset, enter, and fully convert",
         assert.ok(
           Math.abs(end.solShare - (mode === "buy-lower" ? 1 : 0)) < 1e-12,
         );
+      }
+    }
+  }
+});
+
+test("single-sided shapes keep one half of the distribution instead of recentering it", () => {
+  for (const size of ["tight", "wide"] as RangeSize[]) {
+    for (const shape of ["spot", "curve", "bid-ask"] as Shape[]) {
+      const buy = makeBins(shape, size, "buy-lower");
+      const sell = makeBins(shape, size, "sell-higher");
+      for (let i = 0; i < buy.length; i++) {
+        assert.ok(
+          Math.abs(buy[i].weight - sell[sell.length - 1 - i].weight) < 1e-12,
+        );
+        if (i === 0) continue;
+        if (shape === "spot") {
+          assert.equal(buy[i].weight, buy[i - 1].weight);
+          assert.equal(sell[i].weight, sell[i - 1].weight);
+        } else if (shape === "curve") {
+          assert.ok(
+            buy[i].weight > buy[i - 1].weight,
+            "buy Curve grows toward the starting price",
+          );
+          assert.ok(
+            sell[i].weight < sell[i - 1].weight,
+            "sell Curve shrinks away from the starting price",
+          );
+        } else {
+          assert.ok(
+            buy[i].weight < buy[i - 1].weight,
+            "buy Bid-Ask grows toward the lower outer edge",
+          );
+          assert.ok(
+            sell[i].weight > sell[i - 1].weight,
+            "sell Bid-Ask grows toward the upper outer edge",
+          );
+        }
       }
     }
   }

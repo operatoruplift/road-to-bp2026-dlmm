@@ -41,6 +41,14 @@ export function makeBins(
   const range = getRange(size, mode);
   const count = (range.upper - range.lower) / BIN_STEP;
   const raw = Array.from({ length: count }, (_, i) => {
+    if (mode !== "two-sided") {
+      // One-sided shapes are one leg of the distribution, not a new full
+      // curve centered inside the selected side. Weights stay fixed at setup.
+      const towardPrice = mode === "buy-lower" ? i + 1 : count - i;
+      if (shape === "curve") return towardPrice;
+      if (shape === "bid-ask") return count + 1 - towardPrice;
+      return 1;
+    }
     const distance = Math.abs((2 * i) / (count - 1) - 1);
     if (shape === "curve") return 0.12 + Math.exp(-3 * distance ** 2);
     if (shape === "bid-ask") return 0.24 + distance ** 2;

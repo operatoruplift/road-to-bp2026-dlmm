@@ -25,27 +25,48 @@ import {
 import type { DepositMode, RangeSize, Shape } from "../lib/simulator";
 import "./playground.css";
 
-const shapes: { id: Shape; name: string; icon: string; description: string }[] =
-  [
-    {
-      id: "spot",
-      name: "Spot",
-      icon: "▆▆▆▆▆",
-      description: "An even stack. The same amount goes into each bin.",
+const shapes: {
+  id: Shape;
+  name: string;
+  icons: Record<DepositMode, string>;
+  description: string;
+  singleSidedDescription?: string;
+}[] = [
+  {
+    id: "spot",
+    name: "Spot",
+    icons: {
+      "two-sided": "▆▆▆▆▆",
+      "buy-lower": "▆▆▆▆▆",
+      "sell-higher": "▆▆▆▆▆",
     },
-    {
-      id: "curve",
-      name: "Curve",
-      icon: "▂▅█▅▂",
-      description: "More in the middle of your chosen range.",
+    description: "An even stack. The same amount goes into each bin.",
+  },
+  {
+    id: "curve",
+    name: "Curve",
+    icons: {
+      "two-sided": "▂▅█▅▂",
+      "buy-lower": "▁▃▅▆█",
+      "sell-higher": "█▆▅▃▁",
     },
-    {
-      id: "bid-ask",
-      name: "Bid-Ask",
-      icon: "█▅▂▅█",
-      description: "More at the two edges of your chosen range.",
+    description: "More in the middle of your chosen range.",
+    singleSidedDescription:
+      "One half of the curve. More stock near the $150 starting price, less at the far end.",
+  },
+  {
+    id: "bid-ask",
+    name: "Bid-Ask",
+    icons: {
+      "two-sided": "█▅▂▅█",
+      "buy-lower": "█▆▅▃▁",
+      "sell-higher": "▁▃▅▆█",
     },
-  ];
+    description: "More at the two edges of your chosen range.",
+    singleSidedDescription:
+      "One side of the valley. More stock at the far end, less near the $150 starting price.",
+  },
+];
 const depositModes: { id: DepositMode; name: string; description: string }[] = [
   {
     id: "two-sided",
@@ -373,13 +394,16 @@ export default function Playground() {
                   onClick={() => changeShape(item.id)}
                   className={shape === item.id ? "selected" : ""}
                 >
-                  <span aria-hidden="true">{item.icon}</span>
+                  <span aria-hidden="true">{item.icons[depositMode]}</span>
                   {item.name}
                 </button>
               ))}
             </div>
             <p className="pg-setting-description">
-              {selectedShape.description}
+              {depositMode !== "two-sided"
+                ? (selectedShape.singleSidedDescription ??
+                  selectedShape.description)
+                : selectedShape.description}
             </p>
             <div className="pg-setting-label">
               <span>03</span>
