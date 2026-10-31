@@ -16,6 +16,7 @@
 <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white&labelColor=191918" alt="React 19">
 <img src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white&labelColor=191918" alt="Vite 7">
 <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript&logoColor=white&labelColor=191918" alt="TypeScript in strict mode">
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6F6163?style=flat-square&labelColor=191918" alt="License: MIT"></a>
 
 <h3>You know how to swap. Now meet the other side.</h3>
 
@@ -221,6 +222,6 @@ Learning progress is saved only in the current browser, using localStorage when 
 
 <br>
 
-<p align="center"><sub>This repository does not include a license file yet. The LP Army and Meteora names and marks belong to their owners. Educational examples only, not financial advice.</sub></p>
+<p align="center"><sub>The code is MIT licensed (see <a href="LICENSE">LICENSE</a>). The LP Army and Meteora names and marks belong to their owners. Educational examples only, not financial advice.</sub></p>
 
 <p align="center"><sub>Built by <a href="https://rvaclassic.xyz">Matt Sim</a>, founder of <a href="https://operatoruplift.com">Operator Uplift</a>. More builds at <a href="https://github.com/operatoruplift">github.com/operatoruplift</a>. Want one built for your product? <a href="https://cal.com/rvaclassic/15min">Book a 15-minute call</a>.</sub></p>
