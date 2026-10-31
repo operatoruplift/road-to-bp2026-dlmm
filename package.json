@@ -1,7 +1,14 @@
 {
   "name": "road-to-bp2026",
+  "license": "MIT",
   "private": true,
   "version": "1.0.0",
+  "description": "A beginner-friendly Meteora DLMM guide with visual lessons, quizzes and an interactive liquidity playground.",
+  "homepage": "https://road-to-bp2026-dlmm.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/operatoruplift/road-to-bp2026-dlmm.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
